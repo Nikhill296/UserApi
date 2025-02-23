@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 		String msg = Ex.getMessage();
 		
 		
-		ApiResponce res = new ApiResponce(msg, false);
+		ApiResponce res = new ApiResponce(null, msg, false);
 		
 		
 		return new ResponseEntity<ApiResponce>(res, HttpStatus.NOT_FOUND);

@@ -12,12 +12,12 @@ import com.UserApi.Service.Payloads.UserHistoryDto;
 public interface UserService {
 	
 	UserDetailsDto createUserDto(UserDetailsDto UserDetails);
-	UserDetailsDto updateUserDto(UserDetailsDto UserDetails, Integer userId);
+	UserDetailsDto updateUserDto(UserDetailsDto UserDetails, Long userId);
 
-	UserDetailsDto getUserById(Integer userId);
+	UserDetailsDto getUserById(Long userId);
 	List<UserDetailsDto> getAllUser();
-	void deleteUser(Integer userId);
-	void hardDeleteUser(Integer userId);
-	List<UserHistoryDto> showUserHistory(Integer user_id);
+	void deleteUser(Long userId);
+	void hardDeleteUser(Long userId);
+	List<UserHistoryDto> showUserHistory(Long user_id);
 
 }

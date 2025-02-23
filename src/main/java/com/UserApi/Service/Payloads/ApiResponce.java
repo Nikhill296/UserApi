@@ -1,17 +1,19 @@
 package com.UserApi.Service.Payloads;
 
 
-public class ApiResponce {
+public class ApiResponce<T> {
 	
+	T t;
 	String message;
 	Boolean success;
 	
 	
 	
-	public ApiResponce(String message, Boolean success) {
+	public ApiResponce(T t,String message, Boolean success) {
 		super();
 		this.message = message;
 		this.success = success;
+		this.t = t;
 	}
 
 

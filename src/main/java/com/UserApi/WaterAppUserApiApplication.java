@@ -7,21 +7,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.UserApi.Entities.UserDetails;
-import com.UserApi.Repository.UserRepo;
+import lombok.extern.slf4j.Slf4j;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @SpringBootApplication
+@Slf4j
 public class WaterAppUserApiApplication implements CommandLineRunner{
 	
-    private static final Logger logger = LogManager.getLogger(WaterAppUserApiApplication.class);
 
 
 	public static void main(String[] args) {
 //		System.out.println("Helloooooooooooooooooooooooo");
-		logger.info("In main Method ..........");
+		log.info("In main Method ..........");
 		
 		SpringApplication.run(WaterAppUserApiApplication.class, args);
 		

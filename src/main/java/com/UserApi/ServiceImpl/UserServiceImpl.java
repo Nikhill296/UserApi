@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.UserApi.CustomExceptions.ResourceNotFoundException;
 import com.UserApi.Entities.UserDetails;
 import com.UserApi.Entities.UserHistory;
+import com.UserApi.Entities.Enums.Action;
+import com.UserApi.Entities.Enums.UserStatus;
 import com.UserApi.Repository.HistoryRepo;
 import com.UserApi.Repository.UserRepo;
 import com.UserApi.Service.UserService;
@@ -26,7 +29,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepo userRepo;
 		
-	@Autowired
+	@Autowired	
 	private ModelMapper modelMapper;
 	
 	@Autowired
@@ -38,19 +41,35 @@ public class UserServiceImpl implements UserService {
 		
 //		System.out.println("userdto in request >>>>>>> "+UserDto.toString());
 		UserDetails user = this.getUserDetailsObject(UserDto);
-		user.setUser_creation_date(LocalDateTime.now());
+		user.setUserCreationDate(LocalDateTime.now());
 		
 		UserDetails savedUser = this.userRepo.save(user);
 
-		UserHistoryDto userHisDto = new UserHistoryDto();
+//		UserHistoryDto userHisDto = new UserHistoryDto();
 		
-		userHisDto.setUserId(savedUser.getUser_id());
-		userHisDto.setUser_status("UC");
-		userHisDto.setRemark("User Created Successfully");
+//		userHisDto.setUserId(savedUser.getUserId());
+//		userHisDto.setUser_status("UC");
+//		userHisDto.setRemark("User Created Successfully");
 
-		UserHistory userHis = this.gethistorObject(userHisDto);
+//		UserHistory userHis = this.gethistorObject(userHisDto);
 		
-		histRepo.save(userHis);
+//		histRepo.save(userHis);
+		
+	    // Save the user in the repository
+//	    UserDetails savedUser = this.userRepo.save(user);
+
+	    // Prepare UserHistory DTO
+	    UserHistory userHist = new UserHistory();
+	    userHist.setUser(savedUser);
+	    userHist.setUserStatus(UserStatus.ACTIVE);  // Setting Enum 'ACTIVE'
+	    userHist.setAction(Action.CREATED);  // Setting Enum 'CREATED'
+	    userHist.setRemark("User Created Successfully");
+
+	    // Convert DTO to entity
+//	    UserHistory userHis = this.gethistorObject(userHisDto);
+
+	    // Save the user history record
+	    histRepo.save(userHist);
 		
 		return  this.getUserDtoObject(savedUser);
 	}
@@ -58,63 +77,57 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public UserDetailsDto updateUserDto(UserDetailsDto userDtoReq, Integer userId) {
+	public UserDetailsDto updateUserDto(UserDetailsDto userDtoReq, Long userId) {
 
-		 UserDetails user = new UserDetails();
-		 UserDetails updatedUser = new  UserDetails();
-		 
+	    // Retrieve the user to update
+	    UserDetails user = userRepo.findById(userId)
+	            .orElseThrow(() -> new ResourceNotFoundException("user_Details", "User", userId));
 
-			  user = userRepo.findById(userId)
-					  .orElseThrow(()-> new ResourceNotFoundException("user_Details","User",userId));
-		  
-//			  System.out.println("\n userDtoReq of request" + userDtoReq);
-//			  System.out.println("\n user before update" + user);
-			  
-			  user =  this.updateUserDataIfInReq(userDtoReq,user);
-			  
-//			  System.out.println("\n user after updateDATA " + user);
-			  
-		      updatedUser = userRepo.save(user);
-		      
-//			  System.out.println("\n user after Update Query  " + updatedUser);
-				UserHistory userHis = new UserHistory();
-				
-				userHis.setUserId(user.getUser_id());
-				userHis.setUser_status("UU");
-				userHis.setRemark("User updated Successfully");
-				histRepo.save(userHis);
+	    // Update user data based on the request DTO
+	    user = this.updateUserDataIfInReq(userDtoReq, user);
 
-			  
-			  System.out.println("####### user details updated successfully #######");
-	 
-		
-		return this.getUserDtoObject(updatedUser);
+	    // Save the updated user
+	    UserDetails updatedUser = userRepo.save(user);
+
+	    // Log the update action in UserHistory
+	    UserHistory userHis = new UserHistory();
+	    userHis.setUserStatus(UserStatus.ACTIVE); // Using Enum for user status (ACTIVE)
+	    userHis.setAction(Action.UPDATED); // Using Enum for action (UPDATED)
+	    userHis.setRemark("User updated Successfully");
+	    userHis.setUser(user); // Setting user relation for history
+
+	    // Save the user history
+	    histRepo.save(userHis);
+
+	    System.out.println("####### user details updated successfully #######");
+
+	    return this.getUserDtoObject(updatedUser);
 	}
+
 
 	private UserDetails updateUserDataIfInReq(UserDetailsDto userDto, UserDetails user) {
 
 		try {
 			
-			if( userDto.getUser_name() != null && !userDto.getUser_name().isEmpty())
-				user.setUser_name(userDto.getUser_name());
+			user.setUserId(userDto.getUserId());
 
-			if( userDto.getIsd_code() != null && !userDto.getIsd_code().isEmpty() )
-			user.setIsd_code(userDto.getIsd_code());
+			if( userDto.getIsdCode() != null && !userDto.getIsdCode().isEmpty() )
+			user.setIsdCode(userDto.getIsdCode());
 
-			if( userDto.getMob_number() != null && !userDto.getMob_number().isEmpty())
-			user.setMob_number(userDto.getMob_number());
+			if( userDto.getMobNumber() != null && !userDto.getMobNumber().isEmpty())
+			user.setMobnumber(userDto.getMobNumber());
 
-			if( userDto.getEmail_id() != null && !userDto.getEmail_id().isEmpty() )
-			user.setEmail_id(userDto.getEmail_id());
+			if( userDto.getEmailId() != null && !userDto.getEmailId().isEmpty() )
+			user.setEmailId(userDto.getEmailId());
 
-			if( userDto.getGender() != null && !userDto.getGender().isEmpty())
+			if( userDto.getGender() != null )
 			user.setGender(userDto.getGender());
 
-			if( userDto.getAge() != null && !userDto.getAge().isEmpty() )
-			user.setAge(userDto.getAge());
+//			if( userDto.getAge() != null && !userDto.getAge().isEmpty() )
+//			user.setAge(userDto.getAge());
 
-			if( userDto.getBirth_date() != null && !userDto.getBirth_date().isEmpty())
-			user.setBirth_date(userDto.getBirth_date());
+			if( userDto.getBirthDate() != null)
+			user.setBirthDate(userDto.getBirthDate());
 			
 			
 			
@@ -126,7 +139,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDetailsDto getUserById(Integer userId) {
+	public UserDetailsDto getUserById(Long userId) {
 
 		UserDetails user = new UserDetails();
 		
@@ -165,55 +178,53 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUser(Integer userId) {
+	public void deleteUser(Long userId) {
 
-		 UserDetails user = new UserDetails();
-		 UserDetails updatedUser = new  UserDetails();
-		 
-		 
-			  user = userRepo.findById(userId)
-					  .orElseThrow(()-> new ResourceNotFoundException("user_Details","User",userId));
-		 
-			  user.setActive_user("N");
-		      updatedUser = userRepo.save(user);
-		      
-				UserHistory userHis = new UserHistory();
-				
-				userHis.setUserId(user.getUser_id());
-				userHis.setUser_status("UD");
-				userHis.setRemark("User deleted Successfully");
-				histRepo.save(userHis);
+	    // Retrieve the user to delete
+	    UserDetails user = userRepo.findById(userId)
+	            .orElseThrow(() -> new ResourceNotFoundException("user_Details", "User", userId));
 
-			  
-			  
-			  System.out.println("####### user deleted updated successfully #######");
-			  
-		
+	    // Mark the user as inactive (soft delete)
+	    user.setActiveUser(false); // Set the user status to inactive
+	    UserDetails updatedUser = userRepo.save(user);
+
+	    // Log the delete action in UserHistory
+	    UserHistory userHis = new UserHistory();
+	    userHis.setUserStatus(UserStatus.INACTIVE); // Using Enum for user status (INACTIVE)
+	    userHis.setAction(Action.DELETED); // Using Enum for action (DELETED)
+	    userHis.setRemark("User deleted Successfully (soft delete)");
+	    userHis.setUser(user); // Setting user relation for history
+
+	    // Save the user history
+	    histRepo.save(userHis);
+
+	    System.out.println("####### user deleted successfully (soft delete) #######");
 	}
+
 	
 	@Override
-	public void hardDeleteUser(Integer userId) {
+	public void hardDeleteUser(Long userId) {
 
-		 UserDetails user = new UserDetails();
-		 
-		 
-			  user = userRepo.findById(userId)
-					  .orElseThrow(()-> new ResourceNotFoundException("user_Details","User",userId));
-		 
-		      userRepo.delete(user);
-		      
-				UserHistory userHis = new UserHistory();
-				
-				userHis.setUserId(user.getUser_id());
-				userHis.setUser_status("UHD");
-				userHis.setRemark("User deleted Successfully And removed from db");
-				histRepo.save(userHis);
-				
-  
-			  System.out.println("####### user deleted updated successfully #######");
-			  
-		
+	    // Retrieve the user to hard delete
+	    UserDetails user = userRepo.findById(userId)
+	            .orElseThrow(() -> new ResourceNotFoundException("user_Details", "User", userId));
+
+	    // Delete the user from the repository
+	    userRepo.delete(user);
+
+	    // Log the hard delete action in UserHistory
+	    UserHistory userHis = new UserHistory();
+	    userHis.setUserStatus(UserStatus.INACTIVE); // Using Enum for user status (INACTIVE)
+	    userHis.setAction(Action.DELETED); // Using Enum for action (DELETED)
+	    userHis.setRemark("User deleted Successfully And removed from DB (hard delete)");
+	    userHis.setUser(user); // Setting user relation for history
+
+	    // Save the user history
+	    histRepo.save(userHis);
+
+	    System.out.println("####### user hard deleted successfully #######");
 	}
+
 	
 	
 	private UserDetails getUserDetailsObject(UserDetailsDto userDto) {
@@ -260,10 +271,13 @@ public class UserServiceImpl implements UserService {
 		return userDto;
 	}
 	
-	public List<UserHistoryDto> showUserHistory(Integer user_id){
+	public List<UserHistoryDto> showUserHistory(Long user_id){
+		
+		UserDetails user = userRepo.findById(user_id).orElseThrow(
+				() -> new ResourceNotFoundException("User ", "", 0)); 
 		
 		
-		List<UserHistory> history = histRepo.findByUserId(user_id);
+		List<UserHistory> history = histRepo.findByUser(user);
 		
 		List<UserHistoryDto> historyDto = history.stream()
 				.map(e -> this.gethistoryDtoObject(e))

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.UserApi.Entities.UserHistory;
 import com.UserApi.Service.UserService;
 import com.UserApi.Service.Payloads.UserDetailsDto;
 import com.UserApi.Service.Payloads.UserHistoryDto;
@@ -43,7 +42,7 @@ public class UserController {
 	
 	//PUT - to update user
 	@PutMapping("/UpdateUser/{user_id}")
-	public  ResponseEntity<UserDetailsDto> updateUser(@Valid @RequestBody  UserDetailsDto userDto,@PathVariable("user_id") Integer user_id){
+	public  ResponseEntity<UserDetailsDto> updateUser(@Valid @RequestBody  UserDetailsDto userDto,@PathVariable("user_id") Long user_id){
 		
 		UserDetailsDto cereatedUserDto = userService.updateUserDto(userDto, user_id);
 
@@ -55,7 +54,7 @@ public class UserController {
 	//DELETE - to delete user
 	@SuppressWarnings("unchecked")
 	@DeleteMapping("/deleteUser/{user_id}")
-	public ResponseEntity<?> deleteUserById(@PathVariable("user_id") Integer user_id ){
+	public ResponseEntity<?> deleteUserById(@PathVariable("user_id") Long user_id ){
 		
 		userService.deleteUser(user_id);
 		
@@ -65,7 +64,7 @@ public class UserController {
 	
 	//GET - to get user
 	@GetMapping("/getUsers/{user_id}")
-	public ResponseEntity<UserDetailsDto> getUser(@PathVariable("user_id") Integer user_id ){
+	public ResponseEntity<UserDetailsDto> getUser(@PathVariable("user_id") Long user_id ){
 		
 //		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
 		
@@ -89,7 +88,7 @@ public class UserController {
 	
 	//GET - to get user History
 		@GetMapping("/getUserHistory/{user_id}")
-		public ResponseEntity<List<UserHistoryDto>> getUserHistory(@PathVariable("user_id") Integer user_id){
+		public ResponseEntity<List<UserHistoryDto>> getUserHistory(@PathVariable("user_id") Long user_id){
 			
 //			System.out.println("request body :: >>>>>>>> "+ userDto.toString());
 			
