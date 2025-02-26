@@ -23,23 +23,23 @@ import com.UserApi.Service.UserService;
 import com.UserApi.Service.Payloads.UserDetailsDto;
 import com.UserApi.Service.Payloads.UserHistoryDto;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 	
-	@Autowired
-	private UserRepo userRepo;
-		
-	@Autowired	
-	private ModelMapper modelMapper;
-	
-	@Autowired
-	private HistoryRepo histRepo;
+	private final UserRepo userRepo;
+	private final ModelMapper modelMapper;
+	private final HistoryRepo histRepo;
 
 	@Override
 	public UserDetailsDto createUserDto(UserDetailsDto UserDto) {
 		
 		
-//		System.out.println("userdto in request >>>>>>> "+UserDto.toString());
+//		log.info("userdto in request >>>>>>> "+UserDto.toString());
 		UserDetails user = this.getUserDetailsObject(UserDto);
 		user.setUserCreationDate(LocalDateTime.now());
 		
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 	    // Save the user history
 	    histRepo.save(userHis);
 
-	    System.out.println("####### user details updated successfully #######");
+	    log.info("####### user details updated successfully #######");
 
 	    return this.getUserDtoObject(updatedUser);
 	}
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 			
 			
 		} catch (Exception e) {
-			System.out.println("Exception in updateUserDataIfInReq  " + e.getMessage());
+			log.info("Exception in updateUserDataIfInReq  " + e.getMessage());
 		}
 		return user;
 
@@ -166,11 +166,11 @@ public class UserServiceImpl implements UserService {
 //			Durgesh code
 			userDtoList = userList.stream().map(user -> this.getUserDtoObject(user)).collect(Collectors.toList());
 			
-			System.out.println("####### All users Featched successfully #######");
+			log.info("####### All users Featched successfully #######");
 
 		}catch (Exception e) {
 			
-			System.out.println("Exception in getting All user " + e.getMessage());
+			log.info("Exception in getting All user " + e.getMessage());
 
 		}
 		
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
 	    // Save the user history
 	    histRepo.save(userHis);
 
-	    System.out.println("####### user deleted successfully (soft delete) #######");
+	    log.info("####### user deleted successfully (soft delete) #######");
 	}
 
 	
@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
 	    // Save the user history
 	    histRepo.save(userHis);
 
-	    System.out.println("####### user hard deleted successfully #######");
+	    log.info("####### user hard deleted successfully #######");
 	}
 
 	

@@ -5,6 +5,9 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.util.Scanner;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class WaterIntakeCalculator {
 
     public static void main(String[] args) {
@@ -14,16 +17,16 @@ public class WaterIntakeCalculator {
 ////    	birthdate.minus(null)
 //    	Period age =  Period.between(birthdate, LocalDate.now());
 ////    			Duration.between(birthdate, LocalDate.now());
-//    	System.out.println(age.getYears());
+//    	log.info(age.getYears());
 
     	
     	LocalTime wakeupTime = LocalTime.of(07, 30);
 	    LocalTime bedTime = LocalTime.now();
 		
 	    Duration duration = Duration.between(wakeupTime, bedTime);
-    	System.out.println(duration);
-	    System.out.println(duration.toHours());
-    	System.out.println(duration.toMinutes());
+//    	log.info(duration);
+//	    log.info(duration.toHours());
+//    	log.info(duration.toMinutes());
 
 		double totalWakeTime = 0;
 		

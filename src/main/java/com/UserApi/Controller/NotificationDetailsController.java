@@ -37,7 +37,7 @@ public class NotificationDetailsController {
 	@PostMapping("/updateNotif")
 	public ResponseEntity<ApiResponce> updateWaterConsumptionDetails(@Valid @RequestBody UserWaterConsumptionDetailsDto ConsumptionDetailsDto){
 		log.info("entered in updateWaterConsumptionDetails controoler ");
-//		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//		log.info("request body :: >>>>>>>> "+ userDto.toString());
 				boolean updated = notificationService.updateNotificationDetails(ConsumptionDetailsDto);
 		return (updated)?
 				new ResponseEntity<ApiResponce>(new ApiResponce(null,"Consumption Details Updated", true), HttpStatus.CREATED): 
@@ -49,7 +49,7 @@ public class NotificationDetailsController {
 	@GetMapping("/getConsumptionDetails/{userId}")
 	public ResponseEntity<UserWaterConsumptionDetailsDto> getWaterConsumptionDetails(@PathVariable Long userId){
 		log.info("entered in updateWaterConsumptionDetails controoler ");
-//		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//		log.info("request body :: >>>>>>>> "+ userDto.toString());
 //				boolean updated = notificationService.updateNotificationDetails(ConsumptionDetailsDto);
 				
 				UserWaterConsumptionDetailsDto consumptionDetailsDto = notificationService.getWaterConsumptionDetails(userId);;
@@ -64,7 +64,7 @@ public class NotificationDetailsController {
 		@GetMapping("/getNotifDetails/{userId}")
 		public ResponseEntity<List<NotificationDetailsDto>> getWaterNotifDetails(@PathVariable Long userId){
 			log.info("entered in updateWaterConsumptionDetails controoler ");
-//			System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//			log.info("request body :: >>>>>>>> "+ userDto.toString());
 //					boolean updated = notificationService.updateNotificationDetails(ConsumptionDetailsDto);
 					
 			List<NotificationDetailsDto> noftifDetailsDto = notificationService.getNotificationDetails(userId);;
@@ -78,7 +78,7 @@ public class NotificationDetailsController {
 		@GetMapping("/getNotifHistory/{userId}")
 		public ResponseEntity<List<NotificationHistoryDto>> getWaterNotifHistory(@PathVariable Long userId){
 			log.info("entered in updateWaterConsumptionDetails controoler ");
-//			System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//			log.info("request body :: >>>>>>>> "+ userDto.toString());
 //					boolean updated = notificationService.updateNotificationDetails(ConsumptionDetailsDto);
 					
 			List<NotificationHistoryDto> noftifHistoryDto = notificationService.getNotificationHistory(userId);;

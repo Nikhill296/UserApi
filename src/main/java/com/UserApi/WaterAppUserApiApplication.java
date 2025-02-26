@@ -17,7 +17,7 @@ public class WaterAppUserApiApplication implements CommandLineRunner{
 
 
 	public static void main(String[] args) {
-//		System.out.println("Helloooooooooooooooooooooooo");
+//		log.info("Helloooooooooooooooooooooooo");
 		log.info("In main Method ..........");
 		
 		SpringApplication.run(WaterAppUserApiApplication.class, args);
@@ -36,7 +36,7 @@ public class WaterAppUserApiApplication implements CommandLineRunner{
 
 //		repo.save(new UserDetails(1,"prince"));
 //		repo.save(new UserDetails(2, "nik"));
-		System.out.println("\n\n \t\t ############################ welcome to the API ########################### \n\n");
+		log.info("\n\n \t\t ############################ welcome to the API ########################### \n\n");
 		
 //		repo.deleteAll();
 		

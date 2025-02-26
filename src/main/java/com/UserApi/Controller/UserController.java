@@ -3,7 +3,6 @@ package com.UserApi.Controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,19 +19,20 @@ import com.UserApi.Service.Payloads.UserDetailsDto;
 import com.UserApi.Service.Payloads.UserHistoryDto;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/UserAPI/Users")
 public class UserController {
 	
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 	
 	//POST - to create user
 	@PostMapping("/addNewUser")
 	public ResponseEntity<UserDetailsDto> createUser(@Valid @RequestBody UserDetailsDto userDto){
 		
-//		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//		log.info("request body :: >>>>>>>> "+ userDto.toString());
 		
 		UserDetailsDto cereatedUserDto = userService.createUserDto(userDto);
 		
@@ -41,10 +41,10 @@ public class UserController {
 	}
 	
 	//PUT - to update user
-	@PutMapping("/UpdateUser/{user_id}")
-	public  ResponseEntity<UserDetailsDto> updateUser(@Valid @RequestBody  UserDetailsDto userDto,@PathVariable("user_id") Long user_id){
+	@PutMapping("/UpdateUser/{userId}")
+	public  ResponseEntity<UserDetailsDto> updateUser(@Valid @RequestBody  UserDetailsDto userDto,@PathVariable("userId") Long userId){
 		
-		UserDetailsDto cereatedUserDto = userService.updateUserDto(userDto, user_id);
+		UserDetailsDto cereatedUserDto = userService.updateUserDto(userDto, userId);
 
 		
 		return new ResponseEntity<UserDetailsDto>(cereatedUserDto, HttpStatus.ACCEPTED);
@@ -53,22 +53,22 @@ public class UserController {
 	
 	//DELETE - to delete user
 	@SuppressWarnings("unchecked")
-	@DeleteMapping("/deleteUser/{user_id}")
-	public ResponseEntity<?> deleteUserById(@PathVariable("user_id") Long user_id ){
+	@DeleteMapping("/deleteUser/{userId}")
+	public ResponseEntity<?> deleteUserById(@PathVariable("userId") Long userId ){
 		
-		userService.deleteUser(user_id);
+		userService.deleteUser(userId);
 		
 		return new ResponseEntity(Map.of("message","User Deleted Sucessfully"),HttpStatus.OK);
 		
 	}
 	
 	//GET - to get user
-	@GetMapping("/getUsers/{user_id}")
-	public ResponseEntity<UserDetailsDto> getUser(@PathVariable("user_id") Long user_id ){
+	@GetMapping("/getUsers/{userId}")
+	public ResponseEntity<UserDetailsDto> getUser(@PathVariable("userId") Long userId ){
 		
-//		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//		log.info("request body :: >>>>>>>> "+ userDto.toString());
 		
-		UserDetailsDto cereatedUserDto = userService.getUserById(user_id);
+		UserDetailsDto cereatedUserDto = userService.getUserById(userId);
 		
 		return new ResponseEntity<UserDetailsDto>(cereatedUserDto, HttpStatus.ACCEPTED);
 		
@@ -78,7 +78,7 @@ public class UserController {
 	@GetMapping("/getUsers")
 	public ResponseEntity<List<UserDetailsDto>> getAllUser(){
 		
-//		System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//		log.info("request body :: >>>>>>>> "+ userDto.toString());
 		
 		List<UserDetailsDto> cereatedUserDtos = userService.getAllUser();
 		
@@ -87,12 +87,12 @@ public class UserController {
 	}
 	
 	//GET - to get user History
-		@GetMapping("/getUserHistory/{user_id}")
-		public ResponseEntity<List<UserHistoryDto>> getUserHistory(@PathVariable("user_id") Long user_id){
+		@GetMapping("/getUserHistory/{userId}")
+		public ResponseEntity<List<UserHistoryDto>> getUserHistory(@PathVariable("userId") Long userId){
 			
-//			System.out.println("request body :: >>>>>>>> "+ userDto.toString());
+//			log.info("request body :: >>>>>>>> "+ userDto.toString());
 			
-			List<UserHistoryDto> userHistDto = userService.showUserHistory(user_id);
+			List<UserHistoryDto> userHistDto = userService.showUserHistory(userId);
 			
 			return new ResponseEntity<List<UserHistoryDto>>(userHistDto, HttpStatus.ACCEPTED);
 			
