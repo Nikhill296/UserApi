@@ -35,7 +35,10 @@ public class NotificationDetails {
     private LocalTime timestampForNotifi;
     
     private Double amtOfWater;
-
+   
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus status; // Enum for status (Sent/Failed)
+    
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private UserDetails user;

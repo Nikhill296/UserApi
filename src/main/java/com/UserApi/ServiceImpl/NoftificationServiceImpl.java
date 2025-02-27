@@ -16,6 +16,7 @@ import com.UserApi.Entities.NotificationHistory;
 import com.UserApi.Entities.UserDetails;
 import com.UserApi.Entities.UserWaterConsumptionDetails;
 import com.UserApi.Entities.Enums.Gender;
+import com.UserApi.Entities.Enums.NotificationStatus;
 import com.UserApi.Repository.ConsumptnDetailsRepo;
 import com.UserApi.Repository.NotiFicationDetailsRepo;
 import com.UserApi.Repository.NotifHistoryRepo;
@@ -63,21 +64,31 @@ public class NoftificationServiceImpl implements NoftificationService{
 		Boolean isUserConsupmtionExist = consumptnDetailsRepo.existsById(CalculationUtils.nullToEmpty(user.getUserWaterConsumptionDetails().getId()));
 		
 		if(user.getUserWaterConsumptionDetails()!=null && isUserConsupmtionExist) {
-			log.info("users notif details are already present: "+consumptionDetails.toString());
-			log.info("users notif details from Database: "+consumptionDetails.toString());
+			log.info("users consumption details are already present ");
 			consumptionDetails = consumptnDetailsRepo.findById(user.getUserWaterConsumptionDetails().getId()).orElseThrow(
 					() -> new ResourceNotFoundException("consumptionDetails", "id", userId)	);
+
+			log.info("users consumption details from Database: "+consumptionDetails.toString());
+			log.info("updating new details");
+			consumptionDetails.setWakeupTime(consumptionDetailsDto.getWakeupTime());
+			consumptionDetails.setBedTime(consumptionDetailsDto.getBedTime());
+			consumptionDetails.setCupSize(consumptionDetailsDto.getCupSize());
+			consumptionDetails.setHeight(consumptionDetailsDto.getHeight());
+			consumptionDetails.setWeight(consumptionDetailsDto.getWeight());
+//			log.info("updated consumption details: "+consumptionDetails.toString());
+			
 		}else {		
 		consumptionDetails = modelMapper.map(consumptionDetailsDto, UserWaterConsumptionDetails.class);
 		consumptionDetails.setUser(user);
 		}
 		
 		consumptionDetails.setAge(CalculationUtils.AgeCalculator(user.getBirthDate()));
-
-		log.debug("Saving WaterConsumptionDetails");
+		consumptionDetails.setGender(user.getGender());
+		
+		log.info("Saving WaterConsumptionDetails");
 		boolean status =  SetWaterConsumptionDetails(consumptionDetails);
 	
-		log.debug("saving consumptionDetails :"+consumptionDetails.toString());
+		log.info("saving consumptionDetails :"+consumptionDetails.toString());
 		
 	    consumptnDetailsRepo.save(consumptionDetails);
 		
@@ -97,14 +108,14 @@ public class NoftificationServiceImpl implements NoftificationService{
 			
 	    consumptionDetails.setDailyGoal(GetDailyComsumpTion(consumptionDetails));
 		
-//	    calculating total wakeup time
+//	    calculating total awake time
 	    LocalTime wakeupTime = consumptionDetails.getWakeupTime();
 	    LocalTime bedTime = consumptionDetails.getBedTime();
 		
 	    Duration duration = Duration.between(wakeupTime, bedTime);
 		double totalWakeTime = duration.toMinutes();
 		
-//		calculatint total times of notif
+//		Calculating total times of notif
 		int notifNum = (int) (consumptionDetails.getDailyGoal()/consumptionDetails.getCupSize());
 	
 //		calculating time interval
@@ -113,7 +124,7 @@ public class NoftificationServiceImpl implements NoftificationService{
 		Double amtOfWater=(double) 0;
 		LocalTime notifTime = consumptionDetails.getWakeupTime();
 	
-		 log.debug("details going to update: 1. dailyGoal :"+consumptionDetails.getDailyGoal()
+		 log.info("details going to update: 1. dailyGoal :"+consumptionDetails.getDailyGoal()
 		 +" | 2. totalWakeTime: " + totalWakeTime 
 		 +" | 3. notifNum: "+ notifNum 
 		 +" | 4. intervalInMin: "+ intervalInMin 
@@ -128,6 +139,7 @@ public class NoftificationServiceImpl implements NoftificationService{
 			notificationDetails.setUser(consumptionDetails.getUser());
 			notificationDetails.setTimestampForNotifi(notifTime);
 			notifTime=notifTime.plusMinutes(intervalInMin);
+			notificationDetails.setStatus(NotificationStatus.PENDING);
 			notificationDetails.setAmtOfWater(amtOfWater+consumptionDetails.getCupSize());
 			log.debug("inserting notification schuduler Details: "+notificationDetails.toString());
 			notifDetailsRepo.save(notificationDetails);
